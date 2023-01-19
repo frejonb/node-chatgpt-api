@@ -55,6 +55,23 @@ for (let i = 0; i < settings.accounts.length; i++) {
 let currentAccountIndex = 0;
 
 const server = fastify();
+server.addHook('preHandler', (req, res, done) => {
+
+    // // example logic for conditionally adding headers
+    // const allowedPaths = ["/some", "/list", "/of", "/paths"];
+    // if (allowedPaths.includes(req.routerPath)) {
+    // }
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "POST");
+    res.header("Access-Control-Allow-Headers",  "*");
+  
+    const isPreflight = /options/i.test(req.method);
+    if (isPreflight) {
+      return res.send();
+    }
+        
+    done();
+  })
 
 server.post('/conversation', async (request, reply) => {
     if (accounts.length === 0) {
